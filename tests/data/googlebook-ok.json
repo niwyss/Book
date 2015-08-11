@@ -1,0 +1,27 @@
+{
+    "volumeInfo": {
+        "pageCount": 55,
+        "industryIdentifiers": [
+            {
+                "identifier": "0123456789",
+                "type": "ISBN_10"
+            },
+            {
+                "identifier": "0123456789123",
+                "type": "ISBN_13"
+            }
+        ],
+        "description": "The long description",
+        "publishedDate": "2013-04-02",
+        "imageLinks": {
+            "smallThumbnail": "http://server.org/the/thumbnail-small",
+            "thumbnail": "http://server.org/the/thumbnail"
+        },
+        "authors": [
+            "Author n°1",
+            "Author n°2"
+        ],
+        "language": "en",
+        "title": "The title"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "googlebook.key": "",
+    "library.path": "library",
+    "database.path": "book.sqlite",
+    "tmp.path": "tmp",
+    "log.path": "book.log",
+    "error.path": "error"
+}

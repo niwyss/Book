@@ -1,0 +1,119 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+
+# Copyright 2013 Nicolas Wyss
+#
+# This file is part of BOOK.
+#
+# BOOK is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# BOOK is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with BOOK.  If not, see <http://www.gnu.org/licenses/>.
+
+#from modules import database
+
+import argparse, sys, os, json
+from modules import command_add
+from modules import command_init
+from modules import utils
+
+# Informations on the product
+product_name = "book"
+product_description = 'BOOK : Get data from your PDF Books'
+product_version = '0.2'
+
+def parse_arguments():
+
+    # Create the top-level parser
+    parser = argparse.ArgumentParser(description=product_description, prog=product_name)
+    parser.add_argument('--version', action='version', version='%(prog)s ' + product_version)
+    parser.add_argument('-v', '--verbose', action='store_true', help='verbose')
+
+    # Create the low-level parser
+    subparser = parser.add_subparsers(title='commands', dest="command_name" )
+
+    # Create the parser for the "init" command
+    parser_init = subparser.add_parser('init', help='create, init the database')
+
+    # Create the parser for the "add" command
+    parser_add = subparser.add_parser('add', help='add book(s) to database')
+    parser_add.add_argument('file', action='store', help='the file to analyse')
+
+    # Create the parser for the "help" command
+    parser_help = subparser.add_parser('help', help='help for a command')
+
+    return parser
+
+# Get options from command line
+parser = parse_arguments()
+args = parser.parse_args()
+
+# Command : Init
+if args.command_name == 'init':
+
+    # Test : database
+    if os.path.exists(utils.configuration.database_path):
+        print "error: database already exists."
+        sys.exit(1)
+
+    # Test : library folder
+    if os.path.exists(utils.configuration.library_path):
+        print "error: library already exists."
+        sys.exit(1)
+
+    # Test : tmp folder
+    if os.path.exists(utils.configuration.tmp_path):
+        print "error: tmp folder already exists."
+        sys.exit(1)
+
+    # Test : error folder
+    if os.path.exists(utils.configuration.error_path):
+        print "error: error folder already exists."
+        sys.exit(1)
+
+    # Create the base, library
+    command_init.work()
+
+# Command : Add
+elif args.command_name == 'add':
+
+    # Test : database
+    if not(os.path.exists(utils.configuration.database_path)):
+        print "error: no database. Use book init."
+        sys.exit(1)
+
+    # Test : library folder
+    if not(os.path.exists(utils.configuration.library_path)):
+        print "error: no library. Use book init."
+        sys.exit(1)
+
+    # Test : tmp folder
+    if not(os.path.exists(utils.configuration.tmp_path)):
+        print "error: no tmp folder. Use book init."
+        sys.exit(1)
+
+    # Test : error folder
+    if not(os.path.exists(utils.configuration.error_path)):
+        print "error: no error folder. Use book init."
+        sys.exit(1)
+
+    # Params
+    if os.path.isdir(args.file):
+        pdf_paths = map(lambda x: args.file + "/" + x, [f for f in os.listdir(args.file) if f.endswith('.pdf')])
+    if os.path.isfile(args.file):
+        pdf_paths = [args.file]
+
+    # Add book top database
+    command_add.work(pdf_paths)
+
+# No command : help
+else:
+    parser.print_help()
